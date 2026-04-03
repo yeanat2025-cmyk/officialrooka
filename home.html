@@ -10,11 +10,6 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
 </head>
 <body>
 
@@ -23,7 +18,7 @@
 
 <!-- Slider -->
 <div class="slider">
-  <img id="slide" src="assets/slide1.jpg" alt="Slide">
+  <img id="slide" alt="Slide">
 </div>
 
 <!-- Image Buttons -->
@@ -40,17 +35,31 @@
 
 <!-- Big Image -->
 <div class="big-box">
-  <img src="assets/main.jpg" alt="Main">
+  <img id="mainImg" alt="Main">
 </div>
 
 <!-- Grid -->
 <div class="grid">
-  <img src="assets/pic1.jpg" alt="Pic 1">
-  <img src="assets/pic2.jpg" alt="Pic 2">
+  <img id="g1" alt="Pic 1">
+  <img id="g2" alt="Pic 2">
 </div>
 
-<!-- Apply Section (placeholder) -->
-<div id="apply"></div>
+<!-- Apply Section -->
+<div id="apply" class="apply-box">
+  <h3>Apply Form</h3>
+  <form id="applyForm">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="phone" placeholder="Phone Number" required>
+    <select id="position">
+      <option value="Admin">Admin</option>
+      <option value="Super Admin">Super Admin</option>
+      <option value="Reseller">Reseller</option>
+      <option value="Manager">Manager</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="msg"></p>
+</div>
 
 <!-- Bottom Nav -->
 <div class="nav">
@@ -68,8 +77,8 @@
   </a>
 </div>
 
-<!-- JS -->
-<script src="home.js"></script>
+<!-- ✅ type="module" — firebase.js er sathe match korbe -->
+<script type="module" src="home.js"></script>
 
 </body>
 </html>
