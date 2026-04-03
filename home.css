@@ -1,0 +1,168 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #eeeeee;
+  padding-bottom: 65px;
+}
+
+/* ── HEADER ── */
+header {
+  background: #FFD700;
+  padding: 18px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* ── SLIDER ── */
+.slider {
+  width: 100%;
+  background: #ddd;
+}
+
+.slider img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── BUTTONS ── */
+.btns {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 15px;
+  gap: 15px;
+}
+
+.btn-box {
+  flex: 1;
+  background: #FFD700;
+  border: none;
+  border-radius: 6px;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+}
+
+.btn-box:hover {
+  background: #e6b800;
+}
+
+/* ── BIG IMAGE ── */
+.big-box {
+  padding: 0 15px 12px;
+}
+
+.big-box img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  background: #ddd;
+  border: 1px solid #ccc;
+}
+
+/* ── GRID (2 images) ── */
+.grid {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px 15px;
+  gap: 12px;
+}
+
+.grid img {
+  width: 48%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  background: #ddd;
+  border: 1px solid #ccc;
+}
+
+/* ── APPLY BOX ── */
+.apply-box {
+  background: #fff;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.apply-box h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.apply-box input,
+.apply-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.apply-box button {
+  width: 100%;
+  padding: 12px;
+  background: #FFD700;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.apply-box button:hover {
+  background: #e6b800;
+}
+
+#msg {
+  margin-top: 8px;
+  font-size: 13px;
+  color: green;
+}
+
+/* ── BOTTOM NAV ── */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #000;
+  display: flex;
+  z-index: 999;
+}
+
+.nav a {
+  flex: 1;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav img {
+  width: 22px;
+  height: 22px;
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
