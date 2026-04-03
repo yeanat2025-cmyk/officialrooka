@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome</title>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+</head>
+<body>
+
+<div class="logo-container">
+    <img src="assets/profile.png" alt="App Logo">
+    <div class="app-name">Rooka Live</div>
+</div>
+
+<div class="loader"></div>
+
+<script>
+  // 🔥 Firebase Config (তোমারটা বসানো আছে)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCUwePizW0KHicnjm85B80lN8ke2IcldCo",
+    authDomain: "rooka-fe7fc.firebaseapp.com",
+    projectId: "rooka-fe7fc",
+    storageBucket: "rooka-fe7fc.firebasestorage.app",
+    messagingSenderId: "927530984108",
+    appId: "1:927530984108:web:22060c210982d6acbfb509"
+  };
+
+  // ✅ Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // ✅ Auth instance
+  const auth = firebase.auth();
+
+  // ⏳ 3 sec splash delay
+  setTimeout(() => {
+
+    auth.onAuthStateChanged((user) => {
+
+      if (user) {
+        // ✅ User logged in
+        window.location.replace("home.html");
+      } else {
+        // ❌ Not logged in
+        window.location.replace("login.html");
+      }
+
+    });
+
+  }, 3000);
+</script>
+
+</body>
+</html>

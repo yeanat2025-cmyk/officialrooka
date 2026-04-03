@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rooka Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body{
+      margin:0;
+      font-family: Arial;
+      background: linear-gradient(to right, #f7d774, #f2c94c);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .box{
+      background:#fff;
+      padding:30px;
+      border-radius:15px;
+      width:320px;
+      text-align:center;
+      box-shadow:0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border:1px solid #ccc;
+      border-radius:6px;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      background:#f2c94c;
+      border:none;
+      border-radius:6px;
+      font-size:16px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .register{
+      margin-top:15px;
+      font-size:14px;
+    }
+
+    .register a{
+      color:#000;
+      font-weight:bold;
+      text-decoration:none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h2>Rooka Login</h2>
+
+  <form id="loginForm">
+    <input type="text" id="rookaId" placeholder="Rooka ID" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="register">
+    Don’t have account? <a href="register.html">Register Now</a>
+  </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+// 🔥 Firebase config (same)
+const firebaseConfig = {
+  apiKey: "AIzaSyB_qWfwC0YcWHxjs16d6LnAxzKBZg0a0P0",
+  authDomain: "titi-live1.firebaseapp.com",
+  projectId: "titi-live1",
+  storageBucket: "titi-live1.appspot.com",
+  messagingSenderId: "184688632840",
+  appId: "1:184688632840:web:85caa04f3884ca5c609dbd"
+};
+
+// ✅ Init
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const form = document.getElementById('loginForm');
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+
+  const rookaId = document.getElementById('rookaId').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  try{
+
+    const docRef = doc(db, "users", rookaId);
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+      const data = docSnap.data();
+
+      if(data.password === password && data.status === "active"){
+        alert("Login Success ✅");
+
+        // 🔥 FIXED REDIRECT
+        window.location.replace("home.html");
+
+      } else {
+        alert("Wrong password or banned ❌");
+      }
+
+    } else {
+      alert("User not found ❌");
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("Error ❌");
+  }
+
+});
+
+</script>
+
+</body>
+</html>

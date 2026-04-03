@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooka Live — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0b14;
+  --surface: #111120;
+  --surface2: #181828;
+  --border: rgba(255,255,255,0.06);
+  --accent: #a855f7;
+  --accent2: #06b6d4;
+  --accent3: #f43f5e;
+  --accent4: #10b981;
+  --amber: #f59e0b;
+  --text: #f1f5f9;
+  --muted: #4b5563;
+  --sidebar-w: 220px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; overflow-x:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; top:0; left:0; height:100vh;
+  z-index:100; overflow-y:auto;
+}
+.logo {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-name {
+  font-family:'Syne',sans-serif;
+  font-size:17px; font-weight:800;
+  background: linear-gradient(120deg, var(--accent), var(--accent2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.logo-sub {
+  font-size:10px; color:var(--muted);
+  margin-top:2px; letter-spacing:0.5px;
+}
+.logo-dot {
+  display:inline-block; width:6px; height:6px;
+  border-radius:50%; background:var(--accent3);
+  margin-right:5px;
+  animation: blink 1.4s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+.nav { flex:1; padding:10px 0; }
+.nav-section {
+  padding: 10px 20px 4px;
+  font-size:9px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1.5px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 9px 20px; cursor:pointer;
+  font-size:12.5px; color:var(--muted);
+  transition: all 0.18s;
+  border-left: 2px solid transparent;
+  user-select:none;
+}
+.nav-item:hover { color:var(--text); background:rgba(255,255,255,0.03); }
+.nav-item.active {
+  color:var(--accent);
+  border-left-color: var(--accent);
+  background: rgba(168,85,247,0.07);
+}
+.nav-icon { font-size:14px; width:18px; text-align:center; }
+
+/* ── MAIN ── */
+.main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0; }
+.topbar {
+  height:52px; background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 20px; gap:12px;
+  position:sticky; top:0; z-index:50;
+}
+.topbar-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; flex:1; }
+.admin-tag {
+  background:linear-gradient(120deg,var(--accent),var(--accent2));
+  padding:4px 12px; border-radius:20px; font-size:10px; font-weight:600;
+}
+
+.content { padding:18px; flex:1; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── STAT CARDS ── */
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:16px; position:relative; overflow:hidden;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: rgba(168,85,247,0.25); }
+.stat-card::before {
+  content:''; position:absolute; top:-18px; right:-18px;
+  width:65px; height:65px; border-radius:50%; opacity:0.1;
+}
+.stat-card.purple::before { background:var(--accent); }
+.stat-card.cyan::before   { background:var(--accent2); }
+.stat-card.red::before    { background:var(--accent3); }
+.stat-icon { font-size:18px; margin-bottom:6px; }
+.stat-label { font-size:10px; color:var(--muted); margin-bottom:4px; letter-spacing:0.3px; }
+.stat-value { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; }
+.stat-card.purple .stat-value { color:var(--accent); }
+.stat-card.cyan   .stat-value { color:var(--accent2); }
+.stat-card.red    .stat-value { color:var(--accent3); }
+
+/* ── TABLE ── */
+.table-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; margin-bottom:14px;
+}
+.table-header {
+  padding:14px 18px; display:flex; justify-content:space-between;
+  align-items:center; border-bottom:1px solid var(--border);
+  flex-wrap:wrap; gap:8px;
+}
+.table-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+table { width:100%; border-collapse:collapse; }
+th {
+  padding:9px 18px; text-align:left; font-size:9px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.6px;
+  border-bottom:1px solid var(--border); background:var(--surface2);
+}
+td { padding:9px 18px; font-size:12px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.015); }
+
+.avatar-cell { display:flex; align-items:center; gap:8px; }
+.avatar {
+  width:28px; height:28px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; flex-shrink:0;
+}
+.badge { padding:2px 8px; border-radius:20px; font-size:10px; font-weight:500; }
+.badge.active  { background:rgba(16,185,129,0.12); color:var(--accent4); }
+.badge.banned  { background:rgba(244,63,94,0.12);  color:var(--accent3); }
+.badge.pending { background:rgba(245,158,11,0.12); color:var(--amber); }
+
+.action-btns { display:flex; gap:4px; }
+.btn-sm {
+  padding:3px 9px; border-radius:6px; font-size:10px; cursor:pointer;
+  border:1px solid var(--border); background:var(--surface2); color:var(--muted);
+  transition:all 0.18s; white-space:nowrap;
+}
+.btn-sm:hover       { border-color:var(--accent);  color:var(--accent); }
+.btn-sm.danger:hover{ border-color:var(--accent3); color:var(--accent3); }
+.btn-sm.ok:hover    { border-color:var(--accent4); color:var(--accent4); }
+
+/* ── MEDIA PAGE ── */
+.media-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.media-section {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+}
+.media-section-header {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.media-section-icon { font-size:16px; }
+.media-section-title { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; }
+.media-section-body { padding:16px; }
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius:10px; padding:24px 16px;
+  text-align:center; cursor:pointer;
+  transition:all 0.2s; position:relative;
+  background:var(--surface2);
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color:var(--accent); background:rgba(168,85,247,0.04);
+}
+.drop-zone input[type=file] {
+  position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+}
+.drop-icon { font-size:28px; margin-bottom:6px; }
+.drop-text { font-size:11px; color:var(--muted); line-height:1.4; }
+.drop-text strong { color:var(--text); font-size:12px; }
+.media-preview {
+  margin-top:12px; border-radius:8px; overflow:hidden;
+  border:1px solid var(--border); display:none;
+}
+.media-preview img { width:100%; display:block; max-height:120px; object-fit:cover; }
+.media-preview-url {
+  font-size:10px; color:var(--accent2); padding:6px 10px;
+  word-break:break-all; background:var(--surface2);
+}
+.btn-upload {
+  margin-top:10px; width:100%;
+  background:linear-gradient(120deg,var(--accent),var(--accent2));
+  border:none; border-radius:8px; padding:9px;
+  color:#fff; font-size:12px; font-weight:600; cursor:pointer;
+  transition:opacity 0.2s; display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn-upload:hover { opacity:0.85; }
+.btn-upload:disabled { opacity:0.4; cursor:not-allowed; }
+.progress-bar-wrap {
+  margin-top:8px; background:var(--surface2); border-radius:20px;
+  height:4px; overflow:hidden; display:none;
+}
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0%; transition:width 0.3s; border-radius:20px; }
+
+/* ── LOADERS / TOASTS ── */
+.loading { text-align:center; padding:32px; color:var(--muted); }
+.spinner {
+  width:26px; height:26px; border:2px solid var(--border);
+  border-top-color:var(--accent); border-radius:50%;
+  animation:spin 0.75s linear infinite; margin:0 auto 10px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.empty { text-align:center; padding:36px; color:var(--muted); }
+.empty-icon { font-size:36px; margin-bottom:8px; }
+.toast-container { position:fixed; bottom:16px; right:16px; z-index:999; display:flex; flex-direction:column; gap:6px; }
+.toast {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; padding:10px 14px; font-size:12px;
+  animation:slideIn 0.25s ease; min-width:220px; display:flex; align-items:center; gap:8px;
+  pointer-events:none;
+}
+.toast.success { border-left:3px solid var(--accent4); }
+.toast.error   { border-left:3px solid var(--accent3); }
+.toast.info    { border-left:3px solid var(--accent); }
+@keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  .sidebar { width:180px; }
+  .main { margin-left:180px; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .media-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-name">🎙 Rooka Live</div>
+    <div class="logo-sub"><span class="logo-dot"></span>Admin Panel v1.0</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Users</div>
+    <div class="nav-item active" onclick="navigate('dashboard',this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="navigate('all-users',this)">
+      <span class="nav-icon">👥</span> All Users
+    </div>
+    <div class="nav-item" onclick="navigate('apply-list',this)">
+      <span class="nav-icon">📋</span> Apply List
+    </div>
+    <div class="nav-item" onclick="navigate('banned',this)">
+      <span class="nav-icon">🚫</span> Banned Users
+    </div>
+    <div class="nav-item" onclick="navigate('active-users',this)">
+      <span class="nav-icon">✅</span> Active Users
+    </div>
+    <div class="nav-section">Media</div>
+    <div class="nav-item" onclick="navigate('media',this)">
+      <span class="nav-icon">🖼️</span> Media Upload
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pageTitle">Dashboard</div>
+    <div class="admin-tag">Admin</div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card cyan">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">Active Users</div>
+          <div class="stat-value" id="stat-active">—</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">🚫</div>
+          <div class="stat-label">Banned Users</div>
+          <div class="stat-value" id="stat-banned">—</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">Recent Users</span>
+        </div>
+        <div id="recent-users-table">
+          <div class="loading"><div class="spinner"></div>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL USERS -->
+    <div class="page" id="page-all-users">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">All Users</span>
+        </div>
+        <div id="all-users-table">
+          <div class="loading"><div class="spinner"></div>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLY LIST -->
+    <div class="page" id="page-apply-list">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">Apply List</span>
+        </div>
+        <div id="apply-list-table">
+          <div class="loading"><div class="spinner"></div>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNED USERS -->
+    <div class="page" id="page-banned">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">Banned Users</span>
+        </div>
+        <div id="banned-table">
+          <div class="loading"><div class="spinner"></div>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE USERS -->
+    <div class="page" id="page-active-users">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">Active Users</span>
+        </div>
+        <div id="active-users-table">
+          <div class="loading"><div class="spinner"></div>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIA UPLOAD -->
+    <div class="page" id="page-media">
+      <div class="media-grid">
+
+        <!-- Main Image -->
+        <div class="media-section">
+          <div class="media-section-header">
+            <span class="media-section-icon">🖼️</span>
+            <span class="media-section-title">Main Image</span>
+          </div>
+          <div class="media-section-body">
+            <div class="drop-zone" id="dz-main">
+              <input type="file" accept="image/*" onchange="previewFile(this,'prev-main')" id="file-main">
+              <div class="drop-icon">🌄</div>
+              <div class="drop-text"><strong>Click or drag image</strong><br>PNG, JPG, WEBP</div>
+            </div>
+            <div class="media-preview" id="prev-main">
+              <img id="prev-main-img" src="" alt="">
+              <div class="media-preview-url" id="prev-main-url"></div>
+            </div>
+            <div class="progress-bar-wrap" id="prog-main"><div class="progress-bar" id="pb-main"></div></div>
+            <button class="btn-upload" onclick="uploadMain()">⬆️ Upload Main Image</button>
+          </div>
+        </div>
+
+        <!-- Slider Image -->
+        <div class="media-section">
+          <div class="media-section-header">
+            <span class="media-section-icon">🎠</span>
+            <span class="media-section-title">Slider Image</span>
+          </div>
+          <div class="media-section-body">
+            <div class="drop-zone" id="dz-slider">
+              <input type="file" accept="image/*" onchange="previewFile(this,'prev-slider')" id="file-slider">
+              <div class="drop-icon">🎡</div>
+              <div class="drop-text"><strong>Click or drag image</strong><br>Added to slider list</div>
+            </div>
+            <div class="media-preview" id="prev-slider">
+              <img id="prev-slider-img" src="" alt="">
+              <div class="media-preview-url" id="prev-slider-url"></div>
+            </div>
+            <div class="progress-bar-wrap" id="prog-slider"><div class="progress-bar" id="pb-slider"></div></div>
+            <button class="btn-upload" onclick="uploadSlider()">⬆️ Upload Slider Image</button>
+          </div>
+        </div>
+
+        <!-- Grid Image -->
+        <div class="media-section">
+          <div class="media-section-header">
+            <span class="media-section-icon">🔲</span>
+            <span class="media-section-title">Grid Image</span>
+          </div>
+          <div class="media-section-body">
+            <div class="drop-zone" id="dz-grid">
+              <input type="file" accept="image/*" onchange="previewFile(this,'prev-grid')" id="file-grid">
+              <div class="drop-icon">🏙️</div>
+              <div class="drop-text"><strong>Click or drag image</strong><br>Added to grid gallery</div>
+            </div>
+            <div class="media-preview" id="prev-grid">
+              <img id="prev-grid-img" src="" alt="">
+              <div class="media-preview-url" id="prev-grid-url"></div>
+            </div>
+            <div class="progress-bar-wrap" id="prog-grid"><div class="progress-bar" id="pb-grid"></div></div>
+            <button class="btn-upload" onclick="uploadGrid()">⬆️ Upload Grid Image</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- FIREBASE SDK (Modular via CDN via compat shim) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, doc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytesResumable, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import {
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCUwePizW0KHicnjm85B80lN8ke2IcldCo",
+  authDomain: "rooka-fe7fc.firebaseapp.com",
+  projectId: "rooka-fe7fc",
+  storageBucket: "rooka-fe7fc.appspot.com",
+  messagingSenderId: "927530984108",
+  appId: "1:927530984108:web:22060c210982d6acbfb509"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+const storage = getStorage(app);
+
+// ── helpers ──────────────────────────────────────────
+function toast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
+  c.appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+window._toast = toast;
+
+function renderUserTable(users, containerId, showBanAction=true) {
+  if (!users.length) {
+    document.getElementById(containerId).innerHTML =
+      '<div class="empty"><div class="empty-icon">👤</div>No users found</div>';
+    return;
+  }
+  let html = `<table><thead><tr>
+    <th>User</th><th>Email</th><th>Status</th><th>Joined</th>
+    ${showBanAction?'<th>Action</th>':''}
+  </tr></thead><tbody>`;
+  users.forEach(u => {
+    const initials = (u.name||u.email||'U').charAt(0).toUpperCase();
+    const status   = u.status || 'active';
+    const joined   = u.createdAt
+      ? new Date(u.createdAt.seconds ? u.createdAt.seconds*1000 : u.createdAt).toLocaleDateString()
+      : '—';
+    html += `<tr>
+      <td><div class="avatar-cell">
+        <div class="avatar">${initials}</div>
+        <span>${u.name || u.displayName || '—'}</span>
+      </div></td>
+      <td style="color:#64748b;font-size:11px">${u.email||'—'}</td>
+      <td><span class="badge ${status}">${status}</span></td>
+      <td style="color:#64748b;font-size:11px">${joined}</td>
+      ${showBanAction ? `<td><div class="action-btns">
+        <button class="btn-sm ok"    onclick="setStatus('${u.id}','active')">✅ Active</button>
+        <button class="btn-sm danger" onclick="setStatus('${u.id}','banned')">🚫 Ban</button>
+      </div></td>` : ''}
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById(containerId).innerHTML = html;
+}
+
+// ── fetch all users ────────────────────────────────────
+async function fetchUsers() {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+// ── update status ──────────────────────────────────────
+window.setStatus = async function(uid, status) {
+  try {
+    await updateDoc(doc(db, 'users', uid), { status });
+    toast(`User ${status}`, 'success');
+    loadAllUsers();
+    loadDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+};
+
+// ── DASHBOARD ──────────────────────────────────────────
+async function loadDashboard() {
+  const users = await fetchUsers();
+  document.getElementById('stat-total').textContent  = users.length;
+  document.getElementById('stat-active').textContent = users.filter(u=>(u.status||'active')==='active').length;
+  document.getElementById('stat-banned').textContent = users.filter(u=>u.status==='banned').length;
+  const recent = [...users].sort((a,b)=>{
+    const ta = a.createdAt ? (a.createdAt.seconds||0) : 0;
+    const tb = b.createdAt ? (b.createdAt.seconds||0) : 0;
+    return tb-ta;
+  }).slice(0,8);
+  renderUserTable(recent, 'recent-users-table', true);
+}
+
+// ── ALL USERS ──────────────────────────────────────────
+async function loadAllUsers() {
+  document.getElementById('all-users-table').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  const users = await fetchUsers();
+  renderUserTable(users, 'all-users-table', true);
+}
+
+// ── APPLY LIST (status=pending) ────────────────────────
+async function loadApplyList() {
+  document.getElementById('apply-list-table').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  const users = await fetchUsers();
+  const pending = users.filter(u=>u.status==='pending' || u.applyStatus==='pending');
+  renderUserTable(pending, 'apply-list-table', true);
+}
+
+// ── BANNED USERS ───────────────────────────────────────
+async function loadBanned() {
+  document.getElementById('banned-table').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  const users = await fetchUsers();
+  renderUserTable(users.filter(u=>u.status==='banned'), 'banned-table', true);
+}
+
+// ── ACTIVE USERS ───────────────────────────────────────
+async function loadActiveUsers() {
+  document.getElementById('active-users-table').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  const users = await fetchUsers();
+  renderUserTable(users.filter(u=>(u.status||'active')==='active'), 'active-users-table', false);
+}
+
+// ── NAVIGATION ────────────────────────────────────────
+window.navigate = function(pageId, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  el.classList.add('active');
+  const titles = {
+    'dashboard':'Dashboard','all-users':'All Users','apply-list':'Apply List',
+    'banned':'Banned Users','active-users':'Active Users','media':'Media Upload'
+  };
+  document.getElementById('pageTitle').textContent = titles[pageId]||pageId;
+  if (pageId==='dashboard')    loadDashboard();
+  if (pageId==='all-users')    loadAllUsers();
+  if (pageId==='apply-list')   loadApplyList();
+  if (pageId==='banned')       loadBanned();
+  if (pageId==='active-users') loadActiveUsers();
+};
+
+// ── MEDIA UPLOAD ───────────────────────────────────────
+function uploadWithProgress(file, storagePath, firestoreCol, firestoreDocId, fieldConfig, previewId, progressId) {
+  return new Promise((resolve, reject) => {
+    const storageRef = ref(storage, storagePath);
+    const task = uploadBytesResumable(storageRef, file);
+    const wrap = document.getElementById(progressId);
+    const bar  = document.getElementById('pb-'+progressId.replace('prog-',''));
+    if(wrap) { wrap.style.display='block'; }
+    task.on('state_changed',
+      snap => {
+        const pct = (snap.bytesTransferred/snap.totalBytes)*100;
+        if(bar) bar.style.width = pct+'%';
+      },
+      err => reject(err),
+      async () => {
+        const url = await getDownloadURL(task.snapshot.ref);
+        const ref2 = doc(db, firestoreCol, firestoreDocId);
+        await setDoc(ref2, fieldConfig(url), { merge: true });
+        if(wrap) wrap.style.display='none';
+        const urlEl = document.getElementById(previewId+'-url');
+        if(urlEl) urlEl.textContent = url;
+        resolve(url);
+      }
+    );
+  });
+}
+
+window.uploadMain = async function() {
+  const f = document.getElementById('file-main').files[0];
+  if(!f){ _toast('Select a file first','error'); return; }
+  try {
+    await uploadWithProgress(f,`mainImg/${Date.now()}_${f.name}`,'media','mainImg',
+      url=>({url}), 'prev-main','prog-main');
+    _toast('Main image uploaded!','success');
+  } catch(e){ _toast(e.message,'error'); }
+};
+
+window.uploadSlider = async function() {
+  const f = document.getElementById('file-slider').files[0];
+  if(!f){ _toast('Select a file first','error'); return; }
+  try {
+    await uploadWithProgress(f,`slider/${Date.now()}_${f.name}`,'media','slider',
+      url=>({images: [url]}), 'prev-slider','prog-slider');
+    _toast('Slider image uploaded!','success');
+  } catch(e){ _toast(e.message,'error'); }
+};
+
+window.uploadGrid = async function() {
+  const f = document.getElementById('file-grid').files[0];
+  if(!f){ _toast('Select a file first','error'); return; }
+  try {
+    await uploadWithProgress(f,`grid/${Date.now()}_${f.name}`,'media','gridImgs',
+      url=>({urls: [url]}), 'prev-grid','prog-grid');
+    _toast('Grid image uploaded!','success');
+  } catch(e){ _toast(e.message,'error'); }
+};
+
+// ── FILE PREVIEW ───────────────────────────────────────
+window.previewFile = function(input, previewId) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const wrap = document.getElementById(previewId);
+    const img  = document.getElementById(previewId+'-img');
+    if(wrap && img){ wrap.style.display='block'; img.src=e.target.result; }
+  };
+  reader.readAsDataURL(file);
+};
+
+// ── DRAG & DROP ────────────────────────────────────────
+document.querySelectorAll('.drop-zone').forEach(dz => {
+  dz.addEventListener('dragover',  e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave', ()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop', e=>{
+    e.preventDefault(); dz.classList.remove('dragover');
+    const input = dz.querySelector('input[type=file]');
+    if(e.dataTransfer.files[0] && input){
+      const dt = new DataTransfer();
+      dt.items.add(e.dataTransfer.files[0]);
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    }
+  });
+});
+
+// ── INIT ───────────────────────────────────────────────
+loadDashboard();
+</script>
+</body>
+</html>

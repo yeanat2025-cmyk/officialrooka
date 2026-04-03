@@ -1,0 +1,52 @@
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background: linear-gradient(135deg, #ffbb, #ffb); /* আপনার থিম কালার */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+      .logo-container {
+            text-align: center;
+            animation: zoomIn 1.5s ease;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+
+        .app-name {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: black;
+        }
+
+        /* Loading Animation */
+        .loader {
+            margin-top: 30px;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #blue;
+            border-radius: 50%;
+animation: spin 1s linear infinite;
+        }
+
+        @keyframes zoomIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
