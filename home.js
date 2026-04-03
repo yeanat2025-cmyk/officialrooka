@@ -1,7 +1,5 @@
-// ✅ firebase.js already load kora ache HTML e
-// tai ekhane config ar initializeApp lagbe na
-
-const db = firebase.firestore();
+import { db, collection, getDocs, addDoc } from "./firebase.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // ── AUTH CHECK ─────────────────────────────────────────
 const userId = localStorage.getItem("rookaId");
@@ -10,10 +8,11 @@ if (!userId) {
 }
 
 // ── SLIDER ────────────────────────────────────────────
-db.collection('media').doc('slider').get().then(doc => {
-  if (doc.exists && doc.data().images?.length) {
-    const images  = doc.data().images;
-    const slideEl = document.getElementById('slide');
+try {
+  const sliderSnap = await getDoc(doc(db, "media", "slider"));
+  if (sliderSnap.exists() && sliderSnap.data().images?.length) {
+    const images  = sliderSnap.data().images;
+    const slideEl = document.getElementById("slide");
     let i = 0;
     slideEl.src = images[0];
     setInterval(() => {
@@ -21,45 +20,47 @@ db.collection('media').doc('slider').get().then(doc => {
       slideEl.src = images[i];
     }, 2000);
   }
-}).catch(err => console.log("Slider error:", err));
+} catch (e) { console.log("Slider error:", e); }
 
 // ── MAIN IMAGE ────────────────────────────────────────
-db.collection('media').doc('mainImg').get().then(doc => {
-  if (doc.exists && doc.data().url) {
-    document.getElementById('mainImg').src = doc.data().url;
+try {
+  const mainSnap = await getDoc(doc(db, "media", "mainImg"));
+  if (mainSnap.exists() && mainSnap.data().url) {
+    document.getElementById("mainImg").src = mainSnap.data().url;
   }
-}).catch(err => console.log("Main image error:", err));
+} catch (e) { console.log("Main image error:", e); }
 
 // ── GRID IMAGES ───────────────────────────────────────
-db.collection('media').doc('gridImgs').get().then(doc => {
-  if (doc.exists && doc.data().urls?.length) {
-    const urls = doc.data().urls;
-    if (urls[0]) document.getElementById('g1').src = urls[0];
-    if (urls[1]) document.getElementById('g2').src = urls[1];
+try {
+  const gridSnap = await getDoc(doc(db, "media", "gridImgs"));
+  if (gridSnap.exists() && gridSnap.data().urls?.length) {
+    const urls = gridSnap.data().urls;
+    if (urls[0]) document.getElementById("g1").src = urls[0];
+    if (urls[1]) document.getElementById("g2").src = urls[1];
   }
-}).catch(err => console.log("Grid error:", err));
+} catch (e) { console.log("Grid error:", e); }
 
 // ── APPLY FORM ────────────────────────────────────────
-const applyForm = document.getElementById('applyForm');
-const msg       = document.getElementById('msg');
+const applyForm = document.getElementById("applyForm");
+const msg       = document.getElementById("msg");
 
 if (applyForm) {
-  applyForm.addEventListener('submit', async (e) => {
+  applyForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name     = document.getElementById('name').value.trim();
-    const phone    = document.getElementById('phone').value.trim();
-    const position = document.getElementById('position').value;
+    const name     = document.getElementById("name").value.trim();
+    const phone    = document.getElementById("phone").value.trim();
+    const position = document.getElementById("position").value;
 
     if (!name || !phone) return;
 
     try {
-      await db.collection('applications').add({
+      await addDoc(collection(db, "applications"), {
         name,
         phone,
         position,
         userId,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: new Date()
       });
       msg.style.color = "green";
       msg.textContent = "Submitted! ✅";
